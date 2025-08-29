@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Three.js Demos</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: "Arial", sans-serif;
+				background: linear-gradient(135deg, #1e3c72, #2a5298);
+				min-height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+			}
+
+			.container {
+				text-align: center;
+				max-width: 600px;
+				padding: 2rem;
+			}
+
+			h1 {
+				font-size: 3rem;
+				margin-bottom: 1rem;
+				text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+			}
+
+			p {
+				font-size: 1.2rem;
+				margin-bottom: 3rem;
+				opacity: 0.9;
+			}
+
+			.demos {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				gap: 2rem;
+			}
+
+			.demo-card {
+				background: rgba(255, 255, 255, 0.1);
+				border-radius: 15px;
+				padding: 2rem;
+				text-decoration: none;
+				color: white;
+				transition: all 0.3s ease;
+				backdrop-filter: blur(10px);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+			}
+
+			.demo-card:hover {
+				transform: translateY(-10px);
+				background: rgba(255, 255, 255, 0.15);
+				box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+			}
+
+			.demo-card h3 {
+				font-size: 1.5rem;
+				margin-bottom: 1rem;
+			}
+
+			.demo-card p {
+				font-size: 1rem;
+				margin-bottom: 0;
+				opacity: 0.8;
+			}
+
+			@media (max-width: 768px) {
+				.demos {
+					grid-template-columns: 1fr;
+				}
+
+				h1 {
+					font-size: 2rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Three.js Demos</h1>
+			<p>Choose a demo to explore different Three.js effects</p>
+
+			<div class="demos">
+				<a href="index.html" class="demo-card">
+					<h3>🌟 Holographic Material</h3>
+					<p>
+						Interactive holographic material effect with GUI controls and
+						floating statue model
+					</p>
+				</a>
+
+				<a href="pointcloud.html" class="demo-card">
+					<h3>✨ Pointcloud Effect</h3>
+					<p>
+						Animated pointcloud visualization with custom shaders and particle
+						effects
+					</p>
+				</a>
+
+				<a href="imagePointcloud.html" class="demo-card">
+					<h3>🖼️ Image Pointcloud</h3>
+					<p>
+						Convert any image into an interactive 3D pointcloud with depth
+						mapping
+					</p>
+				</a>
+
+				<a href="carouselPointcloud.html" class="demo-card">
+					<h3>🎠 Carousel Pointcloud</h3>
+					<p>
+						3D carousel with drag & wheel interaction featuring Subject images as pointclouds
+					</p>
+				</a>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>3D Carousel Image Pointcloud</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				overflow: hidden;
+				font-family: "Inter", serif;
+				background: linear-gradient(135deg, black, #220033);
+			}
+
+			canvas {
+				display: block;
+			}
+
+			.carousel {
+				position: relative;
+				z-index: 1;
+				height: 100vh;
+				overflow: hidden;
+				pointer-events: none;
+			}
+
+			.carousel-item {
+				--items: 3;
+				--width: clamp(150px, 30vw, 300px);
+				--height: clamp(200px, 40vw, 400px);
+				--x: calc(var(--active) * 800%);
+				--y: calc(var(--active) * 200%);
+				--rot: calc(var(--active) * 120deg);
+				--opacity: calc(var(--zIndex) / var(--items) * 3 - 2);
+				overflow: hidden;
+				position: absolute;
+				z-index: var(--zIndex);
+				width: var(--width);
+				height: var(--height);
+				margin: calc(var(--height) * -0.5) 0 0 calc(var(--width) * -0.5);
+				border-radius: 10px;
+				top: 50%;
+				left: 50%;
+				user-select: none;
+				transform-origin: 0% 100%;
+				box-shadow: 0 10px 50px 10px rgba(0, 0, 0, 0.5);
+				background: black;
+				pointer-events: all;
+				transform: translate(var(--x), var(--y)) rotate(var(--rot));
+				transition: transform 0.8s cubic-bezier(0, 0.02, 0, 1);
+			}
+
+			.carousel-box {
+				position: absolute;
+				z-index: 1;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				transition: opacity 0.8s cubic-bezier(0, 0.02, 0, 1);
+				opacity: var(--opacity);
+				font-family: "Inter", serif;
+			}
+
+			.carousel-box:before {
+				content: "";
+				position: absolute;
+				z-index: 1;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(
+					to bottom,
+					rgba(0, 0, 0, 0.3),
+					rgba(0, 0, 0, 0) 30%,
+					rgba(0, 0, 0, 0) 50%,
+					rgba(0, 0, 0, 0.5)
+				);
+			}
+
+			.title {
+				position: absolute;
+				z-index: 1;
+				color: #fff;
+				bottom: 20px;
+				left: 20px;
+				transition: opacity 0.8s cubic-bezier(0, 0.02, 0, 1);
+				font-size: clamp(20px, 3vw, 30px);
+				text-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+			}
+
+			.num {
+				position: absolute;
+				z-index: 1;
+				color: #fff;
+				top: 10px;
+				left: 20px;
+				transition: opacity 0.8s cubic-bezier(0, 0.02, 0, 1);
+				font-size: clamp(20px, 10vw, 80px);
+			}
+
+			.carousel-item img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				pointer-events: none;
+			}
+
+			.layout {
+				position: absolute;
+				z-index: 0;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				pointer-events: none;
+			}
+
+			.layout:before {
+				content: "";
+				position: absolute;
+				z-index: 1;
+				top: 0;
+				left: 90px;
+				width: 10px;
+				height: 100%;
+				border: 1px solid #fff;
+				border-top: none;
+				border-bottom: none;
+				opacity: 0.15;
+			}
+
+			.box {
+				position: absolute;
+				bottom: 0;
+				left: 30px;
+				color: #fff;
+				transform-origin: 0% 10%;
+				transform: rotate(-90deg);
+				font-size: 9px;
+				line-height: 1.4;
+				text-transform: uppercase;
+				opacity: 0.4;
+			}
+
+			.logo {
+				position: absolute;
+				z-index: 2;
+				top: 28px;
+				right: 28px;
+				width: 30px;
+				height: 30px;
+				background: #fff;
+				border-radius: 50%;
+				opacity: 0.5;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-family: "Inter", serif;
+				pointer-events: all;
+				color: black;
+				text-decoration: none;
+				font-size: 20px;
+				overflow: hidden;
+				padding-bottom: 0.1em;
+			}
+
+			.cursor {
+				position: fixed;
+				z-index: 10;
+				top: 0;
+				left: 0;
+				--size: 40px;
+				width: var(--size);
+				height: var(--size);
+				border-radius: 50%;
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				margin: calc(var(--size) * -0.5) 0 0 calc(var(--size) * -0.5);
+				transition: transform 0.85s cubic-bezier(0, 0.02, 0, 1);
+				display: none;
+				pointer-events: none;
+			}
+
+			.cursor2 {
+				--size: 2px;
+				transition-duration: 0.7s;
+			}
+
+			@media (pointer: fine) {
+				.cursor {
+					display: block;
+				}
+			}
+
+			.loading-overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, 0.8);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				font-size: 18px;
+				z-index: 1000;
+				opacity: 1;
+				transition: opacity 0.5s ease;
+			}
+
+			.loading-overlay.hidden {
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			.spinner {
+				border: 3px solid rgba(255, 255, 255, 0.3);
+				border-radius: 50%;
+				border-top: 3px solid #fff;
+				width: 40px;
+				height: 40px;
+				animation: spin 1s linear infinite;
+				margin-right: 15px;
+			}
+
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+
+			.image-placard {
+				position: fixed;
+				bottom: 40px;
+				left: 50%;
+				transform: translateX(-50%);
+				background: rgba(0, 0, 0, 0.8);
+				backdrop-filter: blur(10px);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 12px;
+				padding: 15px 30px;
+				color: white;
+				font-family: "Inter", sans-serif;
+				font-size: 18px;
+				font-weight: 500;
+				text-align: center;
+				z-index: 100;
+				opacity: 0;
+				transition: opacity 0.5s ease, transform 0.5s ease;
+				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+			}
+
+			.image-placard.visible {
+				opacity: 1;
+			}
+
+			.image-placard .image-title {
+				margin: 0;
+				font-size: 20px;
+				font-weight: 600;
+			}
+
+			.image-placard .image-number {
+				margin: 5px 0 0 0;
+				font-size: 14px;
+				opacity: 0.7;
+				font-weight: 400;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas class="webgl"></canvas>
+
+		<div class="loading-overlay" id="loadingOverlay">
+			<div class="spinner"></div>
+			<span>Loading Images...</span>
+		</div>
+
+		<div class="carousel">
+			<!-- Carousel items will be generated here -->
+		</div>
+
+		<div class="layout">
+			<div class="box">
+				High-end, full-service<br />3D pointcloud visualization<br />for image
+				processing.
+			</div>
+		</div>
+
+		<a href="../home.html" class="logo">3D</a>
+
+		<div class="image-placard" id="imagePlacard">
+			<div class="image-title" id="imageTitle">Subject 1</div>
+			<div class="image-number" id="imageNumber">1 of 3</div>
+		</div>
+
+		<div class="cursor"></div>
+		<div class="cursor cursor2"></div>
+
+		<script type="module" src="./carouselPointcloud.js"></script>
+	</body>
+</html>

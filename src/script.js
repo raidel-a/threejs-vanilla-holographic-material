@@ -100,17 +100,22 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1))
 /**
  * SkyBox
  */
-const geometry = new THREE.SphereGeometry(8, 40, 40)
-const texture = new THREE.TextureLoader().load('background.jpg')
-texture.flipY = true
-const material = new THREE.MeshBasicMaterial({
-  map: texture,
-  side: THREE.BackSide
-})
+// const geometry = new THREE.SphereGeometry(8, 40, 40)
+// const texture = new THREE.TextureLoader().load('background.jpg')
+// texture.flipY = true
+// const material = new THREE.MeshBasicMaterial({
+//   map: texture,
+//   side: THREE.BackSide
+// })
 
-const skyBox = new THREE.Mesh(geometry, material)
-scene.add(skyBox)
-skyBox.rotation.y = -1
+// const skyBox = new THREE.Mesh(geometry, material)
+// scene.add(skyBox)
+// skyBox.rotation.y = -1
+
+/** 
+ * Black Background
+ */
+scene.background = new THREE.Color('#000000')
 
 /**
  * KyloRen Helmet
